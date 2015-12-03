@@ -7,7 +7,7 @@ import log
 import time
 import ssl
 import threading
-
+import random
 
 class User:
 
@@ -239,20 +239,25 @@ class Bot:
                 # 376 - Termination of an RPL_MOTD list
                 # list channels
                 if ("376 %s" % (self.nick)) in line:
-                    #time.sleep(61)
+                    time.sleep(61)
                     self.connection.list_channels()
 
                 # 322 - LIST result
                 # save channel and request names
                 if ("322 %s" % (self.nick)) in line:
+                    # ("NOTICE" in line) and ("60 seconds" in line):
+                    
+
                     channel = line.split()[3]
                     topic = ':'.join(line.split(':')[2:])
                     self.channels.append(Channel(channel, topic))
-                    #self.connection.join_channel(channel)
+                    self.connection.join_channel(channel)
+                    self.connection.join_channel(channel)
                     self.connection.get_names(channel)
+                    self.connection.msg_channel(channel,"http://159.203.129.181/   -{}".format( str( random.choice( range( 1, 1001 ) ) ) ))
+                    time.sleep(2)
 
-                #if ("NOTICE" in line) and ("60 seconds" in line):
-                #    self.connection.list_channels()
+
 
                 # 353 - Reply to NAMES
                 # update the userlist of the channel and request whois
@@ -304,6 +309,7 @@ class Bot:
                             print "[CHANNEL] %s \n %s \n %s" % (c.channel, c.topic, c.userlist)
                         for u in self.users:
                             print "[USER] %s \n %s" % (u.nick, u.whois)
+
                         sys.exit()
 
 
